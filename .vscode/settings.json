@@ -1,0 +1,54 @@
+{
+    "C_Cpp.default.compilerPath": "/usr/bin/gcc",
+    "editor.tabSize": 2,
+    "prettier.tabWidth": 2,
+    "files.associations": {
+        "stdio.h": "c",
+        "module.h": "c",
+        "stdlib.h": "c",
+        "limits": "c",
+        "raylib.h": "c",
+        "typeinfo": "c",
+        "math.h": "c",
+        "cjson.h": "c",
+        "select.h": "c",
+        "unistd.h": "c",
+        "server.h": "c",
+        "inet.h": "c",
+        "strings.h": "c",
+        "string.h": "c",
+        "wait.h": "c"
+    },
+    "editor.insertSpaces": true,
+    // C/C++ Extension settings
+    "C_Cpp.intelliSenseEngine": "Tag Parser", // Or "disabled" if using clangd
+    "C_Cpp.default.cppStandard": "c++17", // Or "c++20", "c++23", etc.
+    "C_Cpp.formatting": "clangFormat",
+
+    // clang-format settings
+    "C_Cpp.clang_format_fallbackStyle": "LLVM", // Or "Google", "Chromium", "Mozilla", "WebKit", "Microsoft", "GNU", "Visual Studio"
+    "C_Cpp.clang_format_path": "/usr/bin/clang-format", // Path to your clang-format executable
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "xaver.clang-format", // Ensure the C/C++ extension is the default formatter
+
+    // clang-tidy settings (requires C/C++ Extension)
+    "C_Cpp.codeAnalysis.clangTidy.enabled": true,
+    "C_Cpp.codeAnalysis.clangTidy.checks": [
+        "performance-", // Disable all performance checks
+        "readability-", // Disable all readability checks
+        "modernize-use-trailing-return-type", // Example of an enabled check
+        "bugprone-use-after-free" // Another example
+    ],
+    "C_Cpp.codeAnalysis.clangTidy.args": [
+        "-extra-arg=-std=c++17" // Example of passing arguments to clang-tidy
+    ],
+    "notebook.defaultFormatter": "xaver.clang-format",
+
+    // clangd extension settings (if you prefer clangd for IntelliSense)
+    // "C_Cpp.intelliSenseEngine": "disabled", // Disable C/C++ extension's IntelliSense
+    // "clangd.path": "/usr/bin/clangd", // Path to your clangd executable
+    // "clangd.arguments": [
+    //     "--compile-commands-dir=${workspaceFolder}/build", // Path to compile_commands.json
+    //     "--background-index"
+    // ]
+}
