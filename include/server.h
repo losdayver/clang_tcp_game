@@ -7,5 +7,5 @@ struct make_server_params {
   int max_clients;
 };
 
-int make_server(struct make_server_params *params);
+void make_server(struct make_server_params *params);
 pid_t fork_server(struct make_server_params *params);

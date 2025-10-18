@@ -23,7 +23,7 @@ pid_t fork_server(struct make_server_params *params) {
   return pid;
 }
 
-int make_server(struct make_server_params *params) {
+void make_server(struct make_server_params *params) {
   struct make_server_params params_copy = *params;
 
   struct sockaddr_in server_addr;
@@ -120,5 +120,4 @@ int make_server(struct make_server_params *params) {
   }
 
   close(server_socket);
-  return 0;
 }
