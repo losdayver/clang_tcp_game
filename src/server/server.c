@@ -9,22 +9,20 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-pid_t fork_server(struct make_server_params *params) {
+pid_t fork_server(struct Make_server_params *params) {
   pid_t pid = fork();
   if (pid < 0) {
     perror("fork");
     exit(1);
   }
   if (pid == 0) {
-    struct make_server_params server_params = {
-        .port = 8080, .buf_size = 1024, .max_clients = 5};
-    make_server(&server_params);
+    make_server(params);
   }
   return pid;
 }
 
-void make_server(struct make_server_params *params) {
-  struct make_server_params params_copy = *params;
+void make_server(struct Make_server_params *params) {
+  struct Make_server_params params_copy = *params;
 
   struct sockaddr_in server_addr;
   server_addr.sin_family = AF_INET;
@@ -52,9 +50,10 @@ void make_server(struct make_server_params *params) {
   listen(server_socket, 5);
   printf("started server on port %d\n", params_copy.port);
 
-  int client, clients[params_copy.max_clients];
+  int client;
+  struct Client_with_parser clients[params_copy.max_clients];
   for (int i = 0; i < params_copy.max_clients; i++)
-    clients[i] = -1;
+    clients[i].client = -1;
 
   int max_fd;
   fd_set readfds;
@@ -64,10 +63,10 @@ void make_server(struct make_server_params *params) {
     max_fd = server_socket;
 
     for (int i = 0; i < params_copy.max_clients; i++) {
-      if (clients[i] != -1) {
-        FD_SET(clients[i], &readfds);
-        if (clients[i] > max_fd)
-          max_fd = clients[i];
+      if (clients[i].client != -1) {
+        FD_SET(clients[i].client, &readfds);
+        if (clients[i].client > max_fd)
+          max_fd = clients[i].client;
       }
     }
 
@@ -89,16 +88,17 @@ void make_server(struct make_server_params *params) {
 
       // Add client to clients
       for (int i = 0; i < params_copy.max_clients; i++) {
-        if (clients[i] == -1) {
-          clients[i] = client;
-          printf("Client %d connected\n", client);
+        if (clients[i].client == -1) {
+          clients[i].client = client;
+          clients[i].parser = Parser_new();
+          printf("client %d connected\n", client);
           break;
         }
       }
     }
 
     for (int i = 0; i < params_copy.max_clients; i++) {
-      int sock = clients[i];
+      int sock = clients[i].client;
       if (sock == -1)
         continue;
 
@@ -108,12 +108,19 @@ void make_server(struct make_server_params *params) {
         if (n <= 0) {
           // client disconnected
           close(sock);
-          clients[i] = -1;
+          clients[i].client = -1;
+          Parser_free(clients[i].parser);
+          printf("client %d disconnected\n", client);
         } else {
           // data is collected here
           buf[n] = '\0';
-          printf("[%d]: %s\n", sock, buf);
-          write(sock, buf, n); // echo
+          Parser_acquire_buffer(clients[i].parser, buf);
+          struct Packet *packet = Parser_pop_packet(clients[i].parser);
+          if (packet) {
+            printf("Got packet: %s\n", packet->method);
+            free(packet->method);
+            free(packet);
+          }
         }
       }
     }

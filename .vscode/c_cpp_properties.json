@@ -8,8 +8,17 @@
             ],
             "defines": [],
             "cStandard": "c23",
-            "cppStandard": "c++26",
-            "compilerPath": "/usr/bin/gcc"
+            "compilerPath": "/usr/bin/gcc",
+            "intelliSenseMode": "linux-gcc-x64",
+            "browse": {
+                "path": [
+                    "${workspaceFolder}",
+                    "/usr/include",
+                    "/usr/local/include"
+                ],
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            }
         }
     ],
     "version": 4

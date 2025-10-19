@@ -17,7 +17,10 @@
         "inet.h": "c",
         "strings.h": "c",
         "string.h": "c",
-        "wait.h": "c"
+        "wait.h": "c",
+        "types.h": "c",
+        "packet.h": "c",
+        "cstdlib": "c"
     },
     "editor.insertSpaces": true,
     // C/C++ Extension settings
