@@ -8,7 +8,9 @@ void Packet_queue_free(struct Packet_queue *instance) {
   while (curr_instance) {
     curr_instance = curr_instance->next;
     prev_instance = curr_instance;
-    if (prev_instance)
+    if (prev_instance) {
+      free(prev_instance->packet);
       free(prev_instance);
+    }
   }
 };

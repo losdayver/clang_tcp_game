@@ -1,5 +1,6 @@
 #include "packet.h"
 #include "server.h"
+#include "window.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,6 +13,6 @@ int main() {
       .port = 8080, .buf_size = 1024, .max_clients = 5};
   pid_t pid = fork_server(&server_params);
   if (pid != 0) {
-    waitpid(pid, NULL, 0);
+    make_window();
   }
 }

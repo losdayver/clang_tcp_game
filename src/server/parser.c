@@ -13,6 +13,41 @@ void Parser_free(struct Parser *parser) {
   free(parser);
 };
 
+void Parser_parse_packet(struct Parser *instance, char *json_str) {
+  cJSON *root = cJSON_Parse(json_str);
+  if (root) {
+    cJSON *method_fld = cJSON_GetObjectItem(root, "method");
+
+    int method =
+        (method_fld && cJSON_IsNumber(method_fld) ? method_fld->valueint : 0);
+
+    printf("method %d", method);
+
+    struct Packet *packet;
+    if (method == PACKET_METHOD_CONNECT) {
+      packet = (struct Packet *)malloc(sizeof(struct Packet_connect));
+      packet->method = method;
+      ((struct Packet_connect *)packet)->nickname =
+          (char *)malloc(sizeof(char));
+      strcpy(((struct Packet_connect *)packet)->nickname,
+             cJSON_GetObjectItem(root, "nickname")->valuestring);
+    } else {
+      cJSON_Delete(root);
+      return;
+    }
+    struct Packet_queue *node =
+        (struct Packet_queue *)malloc(sizeof(struct Packet_queue));
+
+    node->packet = packet;
+    node->next = instance->queue;
+    instance->queue = node;
+
+    cJSON_Delete(root);
+    instance->length = 0;
+    instance->data[0] = '\0';
+  }
+}
+
 void Parser_acquire_buffer(struct Parser *instance, char *buffer) {
   size_t buf_len = strlen(buffer);
   // copy data into buffer
@@ -35,35 +70,22 @@ void Parser_acquire_buffer(struct Parser *instance, char *buffer) {
   char *json_str = (char *)malloc(json_len + 1);
   memcpy(json_str, start, json_len);
   json_str[json_len] = '\0';
-
-  // parse json_str
-  cJSON *root = cJSON_Parse(json_str);
-  if (root) {
-    cJSON *method = cJSON_GetObjectItem(root, "method");
-
-    struct Packet_queue *node =
-        (struct Packet_queue *)malloc(sizeof(struct Packet_queue));
-    node->packet.method =
-        method && cJSON_IsString(method) ? strdup(method->valuestring) : NULL;
-    node->next = instance->queue;
-    instance->queue = node;
-
-    cJSON_Delete(root);
-    instance->length = 0;
-    instance->data[0] = '\0';
-  }
+  Parser_parse_packet(instance, json_str);
 };
 
 struct Packet *Parser_pop_packet(struct Parser *instance) {
   if (instance->queue == NULL)
     return NULL;
-  struct Packet *packet = (struct Packet *)malloc(sizeof(struct Packet));
   struct Packet_queue *node = instance->queue;
-  if (node->packet.method)
-    packet->method = strdup(node->packet.method);
-  else
-    packet->method = NULL;
-  instance->queue = node->next;
+  struct Packet *packet = node->packet;
+  instance->queue = instance->queue->next;
   free(node);
   return packet;
+}
+
+void Packet_free(struct Packet *instance) {
+  if (instance->method == PACKET_METHOD_CONNECT) {
+    free(((struct Packet_connect *)instance)->nickname);
+  }
+  free(instance);
 }

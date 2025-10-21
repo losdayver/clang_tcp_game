@@ -20,7 +20,8 @@
         "wait.h": "c",
         "types.h": "c",
         "packet.h": "c",
-        "cstdlib": "c"
+        "cstdlib": "c",
+        "type_traits": "c"
     },
     "editor.insertSpaces": true,
     // C/C++ Extension settings

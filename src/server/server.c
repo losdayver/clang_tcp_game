@@ -117,9 +117,9 @@ void make_server(struct Make_server_params *params) {
           Parser_acquire_buffer(clients[i].parser, buf);
           struct Packet *packet = Parser_pop_packet(clients[i].parser);
           if (packet) {
-            printf("Got packet: %s\n", packet->method);
-            free(packet->method);
-            free(packet);
+            printf("Got packet: %d From: %s\n", packet->method,
+                   ((struct Packet_connect *)packet)->nickname);
+            Packet_free(packet);
           }
         }
       }

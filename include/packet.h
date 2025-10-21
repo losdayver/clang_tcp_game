@@ -1,9 +1,17 @@
 #pragma once
-#define PARSER_BUFFER_SIZE 4096
 #include <stddef.h>
 
+#define PARSER_BUFFER_SIZE 4096
+
 struct Packet {
-  char *method;
+  int method;
+};
+void Packet_free(struct Packet *instance);
+
+#define PACKET_METHOD_CONNECT 101
+struct Packet_connect {
+  int method;
+  char *nickname;
 };
 
 struct Parser {
@@ -18,6 +26,6 @@ struct Packet *Parser_pop_packet(struct Parser *instance);
 
 struct Packet_queue {
   struct Packet_queue *next;
-  struct Packet packet;
+  struct Packet *packet;
 };
 void Packet_queue_free(struct Packet_queue *instance);
