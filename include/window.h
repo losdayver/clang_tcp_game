@@ -1,4 +1,5 @@
 #pragma once
+#include "client.h"
 
 #define GRID_SIZE 32
 #define FIELD_HORIZONTAL_UNITS 10
@@ -6,4 +7,4 @@
 #define SCREEN_WIDTH 1200
 #define SCREEN_HEIGHT 800
 
-void make_window();
+void start_window(struct Client *client);

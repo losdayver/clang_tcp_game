@@ -1,4 +1,5 @@
 #include "packet.h"
+#include "server.h"
 #include <stdio.h>
 #include <stdlib.h>
 

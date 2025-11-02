@@ -1,5 +1,6 @@
 #include "cJson.h"
 #include "packet.h"
+#include "server.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -21,8 +22,7 @@ void Parser_parse_packet(struct Parser *instance, char *json_str) {
     int method =
         (method_fld && cJSON_IsNumber(method_fld) ? method_fld->valueint : 0);
 
-    printf("method %d", method);
-
+    // parsing different packet types
     struct Packet *packet;
     if (method == PACKET_METHOD_CONNECT) {
       packet = (struct Packet *)malloc(sizeof(struct Packet_connect));

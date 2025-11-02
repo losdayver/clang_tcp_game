@@ -9,20 +9,20 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-pid_t fork_server(struct Make_server_params *params) {
+pid_t fork_server(struct Start_server_params *params) {
   pid_t pid = fork();
   if (pid < 0) {
     perror("fork");
     exit(1);
   }
   if (pid == 0) {
-    make_server(params);
+    start_server(params);
   }
   return pid;
 }
 
-void make_server(struct Make_server_params *params) {
-  struct Make_server_params params_copy = *params;
+void start_server(struct Start_server_params *params) {
+  struct Start_server_params params_copy = *params;
 
   struct sockaddr_in server_addr;
   server_addr.sin_family = AF_INET;
@@ -119,6 +119,8 @@ void make_server(struct Make_server_params *params) {
           if (packet) {
             printf("Got packet: %d From: %s\n", packet->method,
                    ((struct Packet_connect *)packet)->nickname);
+            const char *response = "connected you";
+            send(clients[i].client, response, strlen(response), 0);
             Packet_free(packet);
           }
         }

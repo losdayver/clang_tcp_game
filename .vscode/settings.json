@@ -21,7 +21,11 @@
         "types.h": "c",
         "packet.h": "c",
         "cstdlib": "c",
-        "type_traits": "c"
+        "type_traits": "c",
+        "stddef.h": "c",
+        "client.h": "c",
+        "fcntl.h": "c",
+        "socket.h": "c"
     },
     "editor.insertSpaces": true,
     // C/C++ Extension settings
