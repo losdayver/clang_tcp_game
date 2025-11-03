@@ -1,4 +1,5 @@
 #include "cJson.h"
+#include "libbase64.h"
 #include "packet.h"
 #include "server.h"
 #include <stdio.h>
@@ -61,16 +62,15 @@ void Parser_acquire_buffer(struct Parser *instance, char *buffer) {
   }
 
   // find start and end of json stream
-  char *start = strchr(instance->data, '{');
-  char *end = strchr(instance->data, '}');
-  if (!start || !end || end < start) {
-    return;
+  char *border = strchr(instance->data, '\n');
+  if (border) {
+    size_t base64_len = border - instance->data + 1;
+    char json_str[4096];
+    size_t json_str_len;
+    base64_decode(instance->data, base64_len, json_str, &json_str_len, 0);
+
+    Parser_parse_packet(instance, json_str);
   }
-  size_t json_len = end - start + 1;
-  char *json_str = (char *)malloc(json_len + 1);
-  memcpy(json_str, start, json_len);
-  json_str[json_len] = '\0';
-  Parser_parse_packet(instance, json_str);
 };
 
 struct Packet *Parser_pop_packet(struct Parser *instance) {

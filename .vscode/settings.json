@@ -25,7 +25,8 @@
         "stddef.h": "c",
         "client.h": "c",
         "fcntl.h": "c",
-        "socket.h": "c"
+        "socket.h": "c",
+        "libbase64.h": "c"
     },
     "editor.insertSpaces": true,
     // C/C++ Extension settings

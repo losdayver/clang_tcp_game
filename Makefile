@@ -3,12 +3,13 @@ SRC_DIR = src
 OBJ_DIR = obj
 PKGCONF = conan
 INCLUDE_DIR = include
+LIBS = cjson raylib base64
 
 SRC = $(shell find $(SRC_DIR) -type f -name '*.c')
 OBJ = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC))
 
-CFLAGS := -I$(INCLUDE_DIR) $(shell PKG_CONFIG_PATH=$(PKGCONF) pkg-config --cflags cjson raylib 2>/dev/null)
-LDFLAGS := $(shell PKG_CONFIG_PATH=$(PKGCONF) pkg-config --libs cjson raylib 2>/dev/null)
+CFLAGS := -I$(INCLUDE_DIR) $(shell PKG_CONFIG_PATH=$(PKGCONF) pkg-config --cflags $(LIBS) 2>/dev/null)
+LDFLAGS := $(shell PKG_CONFIG_PATH=$(PKGCONF) pkg-config --libs $(LIBS) 2>/dev/null)
 
 CONAN_ENV = . $(PKGCONF)/conanbuild.sh
 

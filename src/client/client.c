@@ -1,4 +1,5 @@
 #include "client.h"
+#include "libbase64.h"
 #include <arpa/inet.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -41,7 +42,12 @@ struct Client *Client_new(struct Start_client_params *params) {
 }
 
 void Client_send_str(struct Client *instance, char *msg) {
-  send(instance->socket, msg, strlen(msg), 0);
+  size_t srclen = strlen(msg);
+  size_t outlen;
+  char out[1024];
+  base64_encode(msg, srclen, out, &outlen, 0);
+  strcat(out, "\n");
+  send(instance->socket, out, strlen(out), 0);
 };
 
 void Client_pop(struct Client *instance) {
@@ -66,7 +72,7 @@ void Client_pop(struct Client *instance) {
 
   if (n == 0) {
     // 0 bytes = server closed connection
-    printf("server closed connection\n");
+    printf("INFO C: server closed connection\n");
     close(instance->socket);
     instance->socket = -1;
     return;
@@ -76,5 +82,5 @@ void Client_pop(struct Client *instance) {
 
   instance->state = CLIENT_STATE_REGISTERED; // todo DELETEME
 
-  printf("received: %s\n", buf);
+  printf("INFO C: received: %s\n", buf);
 }

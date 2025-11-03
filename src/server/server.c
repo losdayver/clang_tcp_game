@@ -48,7 +48,7 @@ void start_server(struct Start_server_params *params) {
   // allows this socket to "listen" for incoming data. 5 stands for "5 clients
   // will wait in a queue before connecting"
   listen(server_socket, 5);
-  printf("started server on port %d\n", params_copy.port);
+  printf("INFO S: started server on port %d\n", params_copy.port);
 
   int client;
   struct Client_with_parser clients[params_copy.max_clients];
@@ -91,7 +91,7 @@ void start_server(struct Start_server_params *params) {
         if (clients[i].client == -1) {
           clients[i].client = client;
           clients[i].parser = Parser_new();
-          printf("client %d connected\n", client);
+          printf("INFO S: client %d connected\n", client);
           break;
         }
       }
@@ -110,16 +110,17 @@ void start_server(struct Start_server_params *params) {
           close(sock);
           clients[i].client = -1;
           Parser_free(clients[i].parser);
-          printf("client %d disconnected\n", client);
+          printf("INFO S: client %d disconnected\n", client);
         } else {
           // data is collected here
           buf[n] = '\0';
+
           Parser_acquire_buffer(clients[i].parser, buf);
           struct Packet *packet = Parser_pop_packet(clients[i].parser);
           if (packet) {
-            printf("Got packet: %d From: %s\n", packet->method,
+            printf("INFO S: got packet: %d From: %s\n", packet->method,
                    ((struct Packet_connect *)packet)->nickname);
-            const char *response = "connected you";
+            const char *response = "connected you\n";
             send(clients[i].client, response, strlen(response), 0);
             Packet_free(packet);
           }
